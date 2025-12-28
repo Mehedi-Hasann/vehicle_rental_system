@@ -2,7 +2,7 @@
 
 Project Name : Vehicle Rental System (A RESTful backend API for managing a vehicle rental system, built with Express.js, TypeScript, and PostgreSQL)
 
-Live URL : https://vehicle-rental-system-blush.vercel.app/
+Live URL : https://vehicle-rental-system-blond.vercel.app/
 
 🎯Feature :
 A backend API for a vehicle rental management system that handles:

@@ -3,7 +3,8 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 
 export const auth = (...roles: string[]) => {
   return async(req: Request, res: Response, next : NextFunction) => {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.split(' ')[1];
+    console.log(token);
 
     if(!token){
       res.status(500).send({
@@ -14,6 +15,8 @@ export const auth = (...roles: string[]) => {
     const secret = process.env.JWT_SECRET;
     const decoded = await jwt.verify(token as string, secret as string) as JwtPayload;
     req.user = decoded as JwtPayload;
+
+    // console.log(req.params.id);
 
     if(!roles.includes(decoded.role)){
       res.status(401).json({

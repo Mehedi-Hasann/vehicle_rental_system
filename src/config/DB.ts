@@ -1,7 +1,7 @@
 import {Pool} from 'pg';
 
 export const pool = new Pool({
-  connectionString: 'postgresql://neondb_owner:npg_1TIElO6gwMmy@ep-autumn-dawn-ahwnqxnz-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require',
+  connectionString: 'postgresql://neondb_owner:npg_1TIElO6gwMmy@ep-autumn-dawn-ahwnqxnz-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
 });
 
 pool.on('error', (err) => {

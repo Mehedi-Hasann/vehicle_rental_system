@@ -42,7 +42,9 @@ const createBooking = async(payload : Record<string,unknown>) => {
 const getBooking = async(payload: Record<string,unknown>,user : Record<string,unknown>) => {
   const receivedRole = user.role;
   const receivedId = user.id;
-  console.log('look ',user);
+  // console.log(receivedRole, receivedId);
+  // console.log('look ',user);
+
 
   if(receivedRole==='admin'){
     const result = await pool.query(`SELECT       b.id,b.customer_id,b.vehicle_id,b.rent_start_date,b.rent_end_date,b.total_price,b.status,
@@ -60,7 +62,15 @@ FROM bookings b`
 return result.rows;
 
   }else if(receivedRole==='customer'){
+
       const result = (await pool.query(`SELECT * FROM bookings WHERE customer_id=$1`,[receivedId])).rows[0];
+      const statusOfBooking = (await pool.query(`SELECT status FROM bookings WHERE customer_id = $1`,[receivedId])).rows[0].status;
+
+      // console.log(statusOfBooking);
+
+      if(!result || statusOfBooking !== 'active'){
+        return false;
+      }
 
       // console.log(result);
 
@@ -72,6 +82,8 @@ return result.rows;
 
 const updateBookingStatus = async(payload: Record<string,unknown>, user: Record<string,unknown>,id : string) => {
   const {role} = user;
+  const receivedRole = user.role;
+  const receivedId = user.id;
   if(role==='admin'){
     const statusVehicle = 'available';
     const statusBooking = 'returned';
@@ -89,7 +101,17 @@ const updateBookingStatus = async(payload: Record<string,unknown>, user: Record<
     const returnCustomer = customerResult.rows[0];
     const returnVehicleStatus = vehicleStatusNow.rows[0];
     return [returnCustomer, returnVehicleStatus];
+
   }else if(role==='customer'){
+    
+    const result1 = (await pool.query(`SELECT * FROM bookings WHERE customer_id=$1`,[receivedId])).rows[0];
+      const statusOfBooking = (await pool.query(`SELECT status FROM bookings WHERE customer_id = $1`,[receivedId])).rows[0].status;
+
+      console.log(result1,statusOfBooking);
+
+      if(!result1 || statusOfBooking !== 'active'){
+        return false;
+      }
     const statusVehicle = 'available';
     const statusBooking = 'cancelled';
     const result = await pool.query(`SELECT * FROM bookings WHERE id = $1`,[id]);

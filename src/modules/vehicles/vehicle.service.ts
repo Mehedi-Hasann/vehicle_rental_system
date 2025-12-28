@@ -4,16 +4,16 @@ import { pool } from "../../config/DB"
 const createVehicle = async(payload : Record<string,unknown>) => {
   const {vehicle_name,type,registration_number,daily_rent_price,availability_status} = payload;
   const result = await pool.query(`INSERT INTO vehicles(vehicle_name,type,registration_number,daily_rent_price,availability_status) VALUES($1,$2,$3,$4,$5) RETURNING *`,[vehicle_name,type,registration_number,daily_rent_price,availability_status]);
-  console.log(result);
+  // console.log(result);
 
   const vehicle = result.rows[0];
-  return {vehicle};
+  return vehicle;
 }
 
 const getAllVehicles = async(payload: Record<string,unknown>) => {
   const result = await pool.query(`SELECT * FROM vehicles`);
   const allVehicles = result.rows;
-  return {allVehicles};
+  return allVehicles;
 }
 
 const getSingleVehicle = async(id: string) => {
@@ -25,7 +25,7 @@ const getSingleVehicle = async(id: string) => {
   if(singleVehicle.length===0){
     return false;
   }
-  return {singleVehicle};
+  return singleVehicle;
 }
 
 const updateVehicle = async(payload: Record<string,unknown> ,id : string) => {
@@ -40,11 +40,16 @@ const updateVehicle = async(payload: Record<string,unknown> ,id : string) => {
 }
 
 const deleteVehicle = async(id: string) => {
-  const bookingStatus = await pool.query(`SELECT status FROM bookings WHERE vehicle_id=$1`,[id]);
   
-  console.log(bookingStatus.rows[0].status);
-  if(bookingStatus.rows[0].status==='active'){
+  const val = await pool.query(`SELECT availability_status FROM vehicles WHERE id=$1`,[id]);
+
+  if(!val){
+    const bookingStatus = await pool.query(`SELECT status FROM bookings WHERE vehicle_id=$1`,[id]);
+  
+    // console.log(bookingStatus.rows[0].status);
+    if(bookingStatus.rows[0].status==='active'){
     return false;
+  }
   }
   // console.log(id);
   const result = await pool.query(`DELETE FROM vehicles WHERE id = $1`,[id]);

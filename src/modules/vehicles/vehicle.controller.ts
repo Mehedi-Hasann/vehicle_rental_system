@@ -87,7 +87,7 @@ const deleteVehicle = async(req:Request, res: Response) => {
     if(!result){
       res.status(403).json({
         success : false,
-        messaage : "Vehicle is currently active"
+        message : "Vehicle is currently active"
       });
     }
     else if(result.rowCount==0){
@@ -98,7 +98,7 @@ const deleteVehicle = async(req:Request, res: Response) => {
     }else{
       res.status(200).json({
         success: true,
-        messaage : "Vehicle deleted successfully"
+        message : "Vehicle deleted successfully"
       })
     }
   }catch(err: any){
